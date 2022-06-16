@@ -1,7 +1,8 @@
 package com.example.exam_task_with_spring_boot.controller;
 
-import com.example.exam_task_with_spring_boot.dto.request.CompanyRequest;
+import com.example.exam_task_with_spring_boot.dto.request.CompanySaveRequest;
 import com.example.exam_task_with_spring_boot.dto.response.CompanyResponse;
+import com.example.exam_task_with_spring_boot.models.Company;
 import com.example.exam_task_with_spring_boot.services.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +17,17 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping
-    public CompanyResponse create(@RequestBody CompanyRequest companyRequest){
-        return companyService.create(companyRequest);
+    public Company save(@RequestBody CompanySaveRequest companyRequest){
+        return companyService.save(companyRequest);
     }
 
     @PutMapping("{id}")
-    public CompanyResponse update(@PathVariable Long id, @RequestBody CompanyRequest companyRequest){
+    public Company update(@PathVariable Long id, @RequestBody CompanySaveRequest companyRequest){
         return companyService.update(id, companyRequest);
     }
 
     @GetMapping("{id}")
-    public CompanyResponse findById(@PathVariable Long id){
+    public Company findById(@PathVariable Long id){
         return companyService.findById(id);
     }
 
@@ -36,7 +37,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyResponse> getAllCompanies(){
+    public List<Company> getAllCompanies(){
         return companyService.getAllCompanies();
     }
 

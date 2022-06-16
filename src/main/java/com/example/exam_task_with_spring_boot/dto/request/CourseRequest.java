@@ -9,4 +9,5 @@ public class CourseRequest {
 
     private String courseName;
     private String duration;
+    private Long companyId;
 }
