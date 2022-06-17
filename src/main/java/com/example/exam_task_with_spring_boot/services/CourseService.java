@@ -1,6 +1,8 @@
 package com.example.exam_task_with_spring_boot.services;
 
-import com.example.exam_task_with_spring_boot.dto.request.CourseRequest;
+import com.example.exam_task_with_spring_boot.dto.request.CourseSaveRequest;
+import com.example.exam_task_with_spring_boot.dto.request.CourseRequestPUT;
+import com.example.exam_task_with_spring_boot.dto.response.DeleteResponse;
 import com.example.exam_task_with_spring_boot.dto.response.CourseResponse;
 import com.example.exam_task_with_spring_boot.exceptions.CompanyNotFoundException;
 import com.example.exam_task_with_spring_boot.exceptions.CourseNotFoundException;
@@ -11,6 +13,8 @@ import com.example.exam_task_with_spring_boot.repositories.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,18 +25,37 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CompanyRepository companyRepository;
 
-    public List<Course> findALl() {
-        return courseRepository.findAll();
+    public List<CourseResponse> findALl() {
+        List<Course> courses = courseRepository.findAll();
+        List<CourseResponse> simpleResponses = new ArrayList<>();
+
+        for (Course course: courses){
+            simpleResponses.add(new CourseResponse(
+                    course.getId(),
+                    course.getCourseName(),
+                    course.getDuration(),
+                    course.getCompany().getCompanyName()
+            ));
+        }
+
+        return simpleResponses;
     }
 
-    public Course findById(Long courseId) {
-       return courseRepository.findById(courseId).orElseThrow(()->
+    public CourseResponse findById(Long courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() ->
                 new CourseNotFoundException(
-                        "course with id " + courseId +" not found "
+                        "course with id " + courseId + " not found "
                 ));
+
+        return new CourseResponse(
+                course.getId(),
+                course.getCourseName(),
+                course.getDuration(),
+                course.getCompany().getCompanyName()
+        );
     }
 
-    public CourseResponse deleteById(Long courseId) {
+    public DeleteResponse deleteById(Long courseId) {
         boolean exists = courseRepository.existsById(courseId);
         if (!exists){
             throw new CourseNotFoundException(
@@ -42,13 +65,13 @@ public class CourseService {
 
         courseRepository.deleteById(courseId);
 
-        return new CourseResponse(
+        return new DeleteResponse(
                 "DELETED",
                 "Course successfully deleted!"
         );
     }
 
-    public Course save(Long companyId, CourseRequest courseRequest) {
+    public CourseResponse save(Long companyId, CourseSaveRequest courseRequest) {
        Company company = companyRepository.findById(companyId).orElseThrow(()->
                 new CompanyNotFoundException(
                         "company with id "+companyId+" not found"
@@ -62,10 +85,45 @@ public class CourseService {
         company.addCourse(course);
         course.setCompany(company);
 
-         return courseRepository.save(course);
+        courseRepository.save(course);
 
+        return new CourseResponse(
+                course.getId(),
+                course.getCourseName(),
+                course.getDuration(),
+                course.getCompany().getCompanyName()
+        );
 
     }
+    @Transactional
+    public CourseResponse update(Long courseId, CourseRequestPUT courseRequest) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() ->
+                new CourseNotFoundException(
+                        "course with id " + courseId + " not found"
+                ));
+
+        String newName = courseRequest.getCourseName();
+        String currentName = course.getCourseName();
+        if (newName!=null && !newName.equals(currentName)){
+            course.setCourseName(newName);
+        }
+
+        String newDuration =  courseRequest.getDuration();
+        String currentDuration = course.getDuration();
+        if (newDuration!=null&&!newDuration.equals(currentDuration)){
+            course.setDuration(newDuration);
+        }
+
+
+        return new CourseResponse(
+                course.getId(),
+                course.getCourseName(),
+                course.getDuration(),
+                course.getCompany().getCompanyName()
+        );
+
+    }
+
 
 //    private final CourseEditMapper courseEditMapper;
 //    private final CourseViewMapper courseViewMapper;

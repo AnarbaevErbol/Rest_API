@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "courses")
@@ -16,7 +17,6 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @SequenceGenerator(name = "course_gen", sequenceName = "course_seq", allocationSize = 1)
     private Long id;
     private String courseName;
     private String duration;
@@ -28,6 +28,18 @@ public class Course {
               fetch = FetchType.EAGER)
     @JsonIgnore
     private Company company;
+
+    @ManyToMany(mappedBy = "courses", cascade = CascadeType.ALL)
+    private List<Group> groups;
+
+    @OneToOne(mappedBy = "course",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Teacher teacher;
+
+    public void addGroup(Group group){
+        this.groups.add(group);
+    }
+
+
 
 
 

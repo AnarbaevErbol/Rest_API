@@ -4,6 +4,7 @@ import com.example.exam_task_with_spring_boot.dto.request.CompanySaveRequest;
 import com.example.exam_task_with_spring_boot.dto.response.CompanyResponse;
 import com.example.exam_task_with_spring_boot.exceptions.CompanyNotFoundException;
 import com.example.exam_task_with_spring_boot.models.Company;
+import com.example.exam_task_with_spring_boot.models.Course;
 import com.example.exam_task_with_spring_boot.repositories.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class CompanyService {
 
         String newName= companyRequest.getCompanyName();
 
-        if (newName!=null){
+        if (newName!=null ){
             company.setCompanyName(newName);
         }
 
@@ -34,7 +35,10 @@ public class CompanyService {
             company.setLocatedCountry(newLocatedCountry);
         }
 
-        return company;
+         for (Course course: company.getCourses()){
+             course.setCompanyId(course.getCompany().getId());
+         };
+         return company;
     }
 
     private Company getCompanyById(Long id){
@@ -46,16 +50,14 @@ public class CompanyService {
 
 
     public Company findById(Long id){
-//        boolean exists = companyRepository.exists(Long id);
-//
-//        if(!exists){
-//            throw new CompanyNotFoundException(
-//                    "Company with id" + id + "not found!"
-//            );
-//        }
 
-        return getCompanyById(id);
 
+        Company company = getCompanyById(id);
+        for (Course course: company.getCourses()){
+            course.setCompanyId(course.getCompany().getId());
+        }
+
+        return company;
 
     }
 
@@ -77,7 +79,13 @@ public class CompanyService {
     }
 
     public List<Company> getAllCompanies(){
-        return companyRepository.findAll();
+        List<Company> all = companyRepository.findAll();
+        for (Company company: all){
+            for (Course course: company.getCourses()){
+                course.setCompanyId(course.getCompany().getId());
+            }
+        }
+        return all;
     }
 
 

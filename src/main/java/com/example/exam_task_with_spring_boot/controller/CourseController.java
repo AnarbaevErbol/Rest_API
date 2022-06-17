@@ -1,8 +1,9 @@
 package com.example.exam_task_with_spring_boot.controller;
 
-import com.example.exam_task_with_spring_boot.dto.request.CourseRequest;
+import com.example.exam_task_with_spring_boot.dto.request.CourseSaveRequest;
+import com.example.exam_task_with_spring_boot.dto.request.CourseRequestPUT;
+import com.example.exam_task_with_spring_boot.dto.response.DeleteResponse;
 import com.example.exam_task_with_spring_boot.dto.response.CourseResponse;
-import com.example.exam_task_with_spring_boot.models.Course;
 import com.example.exam_task_with_spring_boot.services.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,24 +18,29 @@ public class CourseController {
     private  final CourseService courseService;
 
     @GetMapping
-    public List<Course> getAllCourses(){
+    public List<CourseResponse> getAllCourses(){
         return courseService.findALl();
     }
 
     @GetMapping("{courseId}")
-    public Course findById(@PathVariable Long courseId){
+    public CourseResponse findById(@PathVariable Long courseId){
         return  courseService.findById(courseId);
     }
 
     @DeleteMapping("{courseId}")
-    public CourseResponse delete(@PathVariable Long courseId){
+    public DeleteResponse delete(@PathVariable Long courseId){
         return courseService.deleteById(courseId);
     }
 
     @PostMapping
-    public Course create (@RequestBody CourseRequest courseRequest){
+    public CourseResponse create (@RequestBody CourseSaveRequest courseRequest){
         System.out.println("ishtep jatat");
         return courseService.save(courseRequest.getCompanyId(), courseRequest);
 
+    }
+
+    @PutMapping("{courseId}")
+    public CourseResponse update(@PathVariable Long courseId, @RequestBody CourseRequestPUT courseRequest){
+        return courseService.update(courseId, courseRequest);
     }
 }

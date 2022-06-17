@@ -24,8 +24,10 @@ public class Company {
 
     @OneToMany(mappedBy = "company",
               cascade = CascadeType.ALL,
+              fetch = FetchType.EAGER,
               orphanRemoval = true)
     private List<Course> courses;
+
 
     @CreatedDate
     private LocalDate created;
