@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CompanySaveRequest {
+public class TeacherRequestPUT {
 
-    private String companyName;
-    private String locatedCountry;
-
+    private String firstName;
+    private String lastName;
+    private String email;
 }

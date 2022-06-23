@@ -6,10 +6,13 @@ import com.example.exam_task_with_spring_boot.dto.response.DeleteResponse;
 import com.example.exam_task_with_spring_boot.dto.response.CourseResponse;
 import com.example.exam_task_with_spring_boot.exceptions.CompanyNotFoundException;
 import com.example.exam_task_with_spring_boot.exceptions.CourseNotFoundException;
+import com.example.exam_task_with_spring_boot.exceptions.GroupNotFoundException;
 import com.example.exam_task_with_spring_boot.models.Company;
 import com.example.exam_task_with_spring_boot.models.Course;
+import com.example.exam_task_with_spring_boot.models.Group;
 import com.example.exam_task_with_spring_boot.repositories.CompanyRepository;
 import com.example.exam_task_with_spring_boot.repositories.CourseRepository;
+import com.example.exam_task_with_spring_boot.repositories.GroupRepisitory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +20,13 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CompanyRepository companyRepository;
+    private final GroupRepisitory groupRepisitory;
 
     public List<CourseResponse> findALl() {
         List<Course> courses = courseRepository.findAll();
@@ -37,6 +40,7 @@ public class CourseService {
                     course.getCompany().getCompanyName()
             ));
         }
+
 
         return simpleResponses;
     }
@@ -56,14 +60,30 @@ public class CourseService {
     }
 
     public DeleteResponse deleteById(Long courseId) {
-        boolean exists = courseRepository.existsById(courseId);
-        if (!exists){
-            throw new CourseNotFoundException(
-                    "Course with id " + courseId + " does not exist"
-            );
+        Course course = courseRepository.findById(courseId).orElseThrow(() ->
+                new CourseNotFoundException(
+                        "course with id " + courseId + " not found "
+                ));
+
+       if (course.getGroups().size()==1){
+           for (Group group: course.getGroups()){
+                Group group1 = groupRepisitory.findById(group.getId()).orElseThrow(() ->
+                       new GroupNotFoundException(
+                               "group with id " + group.getId() + " not found!"));
+               groupRepisitory.delete(group1);
+            }
+
         }
 
-        courseRepository.deleteById(courseId);
+//       List<Group> courseGroups = new ArrayList<>();
+//       if(course.getGroups().size()>1){
+//            for (Group group: course.getGroups()) {
+//                   course.removeGroup(group);
+//                   groupRepisitory.delete(group );
+//            }
+//       }
+        courseRepository.delete(course);
+
 
         return new DeleteResponse(
                 "DELETED",
@@ -123,7 +143,6 @@ public class CourseService {
         );
 
     }
-
 
 //    private final CourseEditMapper courseEditMapper;
 //    private final CourseViewMapper courseViewMapper;

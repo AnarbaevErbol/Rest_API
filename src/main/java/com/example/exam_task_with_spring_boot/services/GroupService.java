@@ -5,6 +5,7 @@ import com.example.exam_task_with_spring_boot.dto.request.GroupSaveRequest;
 import com.example.exam_task_with_spring_boot.dto.response.DeleteResponse;
 import com.example.exam_task_with_spring_boot.dto.response.GroupResponse;
 import com.example.exam_task_with_spring_boot.exceptions.CourseNotFoundException;
+import com.example.exam_task_with_spring_boot.exceptions.GroupNotFoundException;
 import com.example.exam_task_with_spring_boot.models.Course;
 import com.example.exam_task_with_spring_boot.models.Group;
 import com.example.exam_task_with_spring_boot.repositories.CourseRepository;
@@ -47,7 +48,7 @@ public class GroupService {
 
     public GroupResponse findById(Long groupId) {
         Group group = groupRepisitory.findById(groupId).orElseThrow(()->
-                new CourseNotFoundException(
+                new GroupNotFoundException(
                         "group with id " + groupId + " not found "
                 ));
 

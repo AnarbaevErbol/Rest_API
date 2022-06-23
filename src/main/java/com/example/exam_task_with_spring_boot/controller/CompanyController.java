@@ -5,6 +5,7 @@ import com.example.exam_task_with_spring_boot.dto.response.CompanyResponse;
 import com.example.exam_task_with_spring_boot.models.Company;
 import com.example.exam_task_with_spring_boot.services.CompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/company")
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 public class CompanyController {
 
     private final CompanyService companyService;

@@ -6,6 +6,7 @@ import com.example.exam_task_with_spring_boot.dto.response.DeleteResponse;
 import com.example.exam_task_with_spring_boot.dto.response.CourseResponse;
 import com.example.exam_task_with_spring_boot.services.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/course")
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 public class CourseController {
 
     private  final CourseService courseService;

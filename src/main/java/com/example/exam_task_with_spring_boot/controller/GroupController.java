@@ -7,6 +7,7 @@ import com.example.exam_task_with_spring_boot.dto.response.GroupResponse;
 import com.example.exam_task_with_spring_boot.models.Group;
 import com.example.exam_task_with_spring_boot.services.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/group")
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 public class GroupController {
 
 

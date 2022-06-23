@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.MERGE;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 @Table(name = "groups")
@@ -24,11 +26,15 @@ public class Group {
     private String dateOfFinish;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {PERSIST,MERGE},fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Course> courses;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Student> students;
+
+    public void addStudent(Student student){
+        this.students.add(student);
+    }
 
 }

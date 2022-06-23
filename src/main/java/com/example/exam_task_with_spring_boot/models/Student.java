@@ -21,7 +21,11 @@ public class Student {
     private String email;
     private StudyFormat studyFormat;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @Transient
+    private Long groupId;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Group group;
+
 
 }

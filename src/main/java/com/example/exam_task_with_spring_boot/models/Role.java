@@ -5,25 +5,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "teachers")
+@Table(name = "roles")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Teacher {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private String roleName;
 
-    @Transient
-    private Long courseId;
-
-    @OneToOne
-    private Course course;
+    @ManyToMany(targetEntity = User.class, mappedBy = "roles", cascade = CascadeType.ALL)
+    List<User> users;
 
 }

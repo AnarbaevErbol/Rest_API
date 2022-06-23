@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.List;
 
+import static javax.persistence.CascadeType.*;
+
 @Entity
 @Table(name = "courses")
 @Getter
@@ -24,23 +26,24 @@ public class Course {
     @Transient
     private Long companyId;
 
-    @ManyToOne(cascade = CascadeType.ALL,
-              fetch = FetchType.EAGER)
+    @ManyToOne(cascade = MERGE)
     @JsonIgnore
     private Company company;
 
-    @ManyToMany(mappedBy = "courses", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "courses",cascade = {PERSIST,MERGE},fetch = FetchType.LAZY)
     private List<Group> groups;
 
-    @OneToOne(mappedBy = "course",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "course",orphanRemoval = true)
     private Teacher teacher;
 
     public void addGroup(Group group){
         this.groups.add(group);
     }
 
-
-
+    public void removeGroup(Group group) {
+        this.groups.remove(group);
+        group.getCourses().remove(this);
+    }
 
 
 }

@@ -96,6 +96,5 @@ public class CompanyService {
         company.setCreated(LocalDate.now());
 
          return companyRepository.save(company);
-
     }
 }
